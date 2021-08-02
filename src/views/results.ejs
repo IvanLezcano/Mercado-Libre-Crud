@@ -19,8 +19,10 @@
 				<% if(resultado.length > 0) { %>
 				<h2 class="products-title">Resultados de la búsqueda: <%= busqueda %> </h2>
 			</div>
-				<div class="col-12 col-sm-6 col-lg-12  d-flex justify-content-between flex-wrap">
-					<% resultado.forEach(producto => { %>
+		
+				
+				<% resultado.forEach(producto => { %>
+					<div class="col-12 col-sm-6 col-lg-3">
 					<section class="product-box">
 						<a href="/products/detail/<%= producto.id %>">
 							<figure class="product-box_image">
@@ -34,8 +36,9 @@
 							</article>
 						</a>
 					</section>
-					<% }) %>
 				</div>
+
+					<% }) %>
 				<% }else{ %>
 			<div class="col-12">
 				<h2 class="products-title" style="color: tomato;">No hay productos que coincidan con esa búsqueda</h2>

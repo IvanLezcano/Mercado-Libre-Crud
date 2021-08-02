@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const productsFilePath = path.join(__dirname, '../data/productsDataBase.json');
-const products = JSON.parse(fs.readFileSync(productsFilePath, 'utf-8'));
+let products = JSON.parse(fs.readFileSync(productsFilePath, 'utf-8'));
 
 const toThousand = n => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 const descuento= (descuento,precio ) =>{
@@ -10,6 +10,15 @@ const descuento= (descuento,precio ) =>{
 	let resultadoParcial =descuento*precio/100
 	return precio - resultadoParcial
 }  
+
+
+let almacenar = (products) => {
+	fs.writeFileSync(
+	  path.join(__dirname, "../data/productsDataBase.json"),
+	  JSON.stringify(products, null, " "),
+	  "utf-8"
+	);
+  };
 const controller = {
 	// Root - Show all products
 	index: (req, res) => {
@@ -29,6 +38,7 @@ const controller = {
             producto,
 			products,
 			descuento,
+			toThousand,
         })
 	},
 
@@ -41,24 +51,50 @@ const controller = {
 	
 	// Create -  Method to store
 	store: (req, res) => {
-		
+		const { name, price, discount, category, description } = req.body;
+		let product = {
+		  id: products[products.length - 1].id + 1, 
+		  name,
+		  description,
+		  price,
+		  discount,
+		  image: "default-image.png",
+		  category,
+		};
+		products.push(product);
+		almacenar(products);
+		res.redirect('/products');
+	
 	},
 
 	// Update - Form to edit
 	edit: (req, res) => {
-		return res.render('product-edit-form',{
-			products
-		})
+		let product = products.find((product) => product.id === +req.params.id);
+		res.render('product-edit-form', {
+		  product,
+		});
 	},
-	// Update - Method to update
 	update: (req, res) => {
-		// Do the magic
+
+		const { name, price, discount, category, description } = req.body;
+		products.forEach((product) => {
+		  if (product.id == +req.params.id) {
+			product.name = name;
+			product.price = price;
+			product.discount = discount;
+			product.category = category;
+			product.description = description;
+		  }
+		});
+		almacenar(products);
+		res.redirect('/products');
 	},
 
 	// Delete - Delete one product from DB
-	destroy : (req, res) => {
-		// Do the magic
-	}
-};
-
+	destroy: (req, res) => {
+		products = products.filter((product) => product.id !== +req.params.id);
+		almacenar(products);
+		res.redirect('/products');
+	  },
+	};
 module.exports = controller;

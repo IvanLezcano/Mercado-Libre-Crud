@@ -25,17 +25,20 @@
 				<div class="col-12 col-lg-4">
 					<article class="product-detail-info">
 						<h2 class="product-detail-title"><%= producto.name %></h2>
-						
+						<% if(producto.discount !== 0) { %> 
 							<p class="product-detail-price small">
-								<span><%= producto.price %></span>
+								<span><%= producto.price%></span>
 								/
-								<b><%= producto.name %>DISCOUNT% OFF</b>
+								<b><%= producto.discount %>% OFF</b>
+							</p>
+						
+							<p class="product-detail-price">
+								$<%= toThousand(descuento(producto.discount, producto.price).toFixed(0)) %> 
+								<% }else{ %> 		
 							</p>
 							<p class="product-detail-price">
-								$FINAL PRICE
-							</p>
-							<p class="product-detail-price">
-								$PRICE
+								$<%= toThousand(producto.price.toFixed(0)) %> 
+								<% } %> 	
 							</p>
 
 						<ul class="actions-list">
@@ -52,8 +55,8 @@
 						<a href="#" class="buy-now-button">COMPRAR AHORA</a>
 						<hr>
 
-						<a href="/products/edit/¿?" class="action-button edit">EDITAR PRODUCTO</a>
-						<form action="/products/delete/¿¿" method="POST" style="display: inline-flex">
+						<a href="/products/edit/<%= producto.id %>" class="action-button edit">EDITAR PRODUCTO</a>
+						<form action="/products/delete/<%= producto.id %>?_method=DELETE" method="POST" style="display: inline-flex">
 							<button type="submit" class="action-button delete">ELIMINAR</button>
 						</form>
 					</article>
